@@ -9,7 +9,7 @@ name = "attic"
 path = "src/main.rs"
 
 [dependencies]
-attic = { path = "../attic" }
+attic = { path = "../attic", default-features = false }
 
 anyhow = "1.0.71"
 async-channel = "2.3.1"
@@ -45,3 +45,13 @@ features = [
 	"rt-multi-thread",
 	"sync",
 ]
+
+
+[features]
+default = [
+	"nix_store",
+	"cli"
+]
+
+cli = []
+nix_store = ["attic/nix_store"]

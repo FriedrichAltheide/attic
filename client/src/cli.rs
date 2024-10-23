@@ -8,10 +8,13 @@ use clap_complete::Shell;
 use enum_as_inner::EnumAsInner;
 
 use crate::command::cache::{self, Cache};
+#[cfg(feature = "nix_store")]
 use crate::command::get_closure::{self, GetClosure};
 use crate::command::login::{self, Login};
+#[cfg(feature = "nix_store")]
 use crate::command::push::{self, Push};
 use crate::command::r#use::{self, Use};
+#[cfg(feature = "nix_store")]
 use crate::command::watch_store::{self, WatchStore};
 
 /// Attic binary cache client.
@@ -27,10 +30,13 @@ pub struct Opts {
 pub enum Command {
     Login(Login),
     Use(Use),
+    #[cfg(feature = "nix_store")]
     Push(Push),
     Cache(Cache),
+    #[cfg(feature = "nix_store")]
     WatchStore(WatchStore),
 
+    #[cfg(feature = "nix_store")]
     #[clap(hide = true)]
     GetClosure(GetClosure),
 }
@@ -53,9 +59,12 @@ pub async fn run() -> Result<()> {
     match opts.command {
         Command::Login(_) => login::run(opts).await,
         Command::Use(_) => r#use::run(opts).await,
+        #[cfg(feature = "nix_store")]
         Command::Push(_) => push::run(opts).await,
         Command::Cache(_) => cache::run(opts).await,
+        #[cfg(feature = "nix_store")]
         Command::WatchStore(_) => watch_store::run(opts).await,
+        #[cfg(feature = "nix_store")]
         Command::GetClosure(_) => get_closure::run(opts).await,
     }
 }
