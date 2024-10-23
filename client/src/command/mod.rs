@@ -1,6 +1,9 @@
 pub mod cache;
+#[cfg(feature = "nix_store")]
 pub mod get_closure;
 pub mod login;
+#[cfg(feature = "nix_store")]
 pub mod push;
 pub mod r#use;
+#[cfg(feature = "nix_store")]
 pub mod watch_store;
