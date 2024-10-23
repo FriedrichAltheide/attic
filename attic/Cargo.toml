@@ -78,6 +78,9 @@ stream = ["tokio", "dep:async-stream"]
 # Tokio runtime.
 tokio = ["dep:tokio", "tokio/rt", "tokio/time"]
 
+benchmarking = ["tokio"]
+
 [[bench]]
 name = "chunking"
 harness = false
+required-features = ["benchmarking"]
