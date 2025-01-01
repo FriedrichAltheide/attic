@@ -9,8 +9,10 @@ use std::sync::Arc;
 use std::task::{Context, Poll};
 
 use tempfile::NamedTempFile;
+#[cfg(feature = "nix_store")]
 use tokio::fs::{File, OpenOptions};
 use tokio::io::{AsyncReadExt, AsyncWrite, AsyncWriteExt};
+#[cfg(feature = "nix_store")]
 use tokio::process::Command;
 
 use crate::error::AtticResult;
@@ -96,6 +98,7 @@ pub struct NarDump {
     expected: TestNar,
 }
 
+#[cfg(feature = "nix_store")]
 pub struct NarDumpWriter {
     file: File,
     _lifetime: Arc<NarDump>,
@@ -105,6 +108,7 @@ impl TestNar {
     /// Attempts to import the NAR into the local Nix Store.
     ///
     /// This requires the current user to be trusted by the nix-daemon.
+    #[cfg(feature = "nix_store")]
     pub async fn import(&self) -> io::Result<()> {
         let mut child = Command::new("nix-store")
             .arg("--import")
@@ -159,12 +163,14 @@ impl TestNar {
     }
 
     /// Creates a new test target.
+    #[cfg(feature = "nix_store")]
     pub fn get_target(&self) -> io::Result<Arc<NarDump>> {
         let target = NarDump::new(self.clone())?;
         Ok(Arc::new(target))
     }
 }
 
+#[cfg(feature = "nix_store")]
 impl NarDump {
     /// Creates a new dump target.
     fn new(expected: TestNar) -> io::Result<Self> {
@@ -226,6 +232,7 @@ impl NarDump {
     }
 }
 
+#[cfg(feature = "nix_store")]
 impl AsyncWrite for NarDumpWriter {
     fn poll_write(
         mut self: Pin<&mut Self>,

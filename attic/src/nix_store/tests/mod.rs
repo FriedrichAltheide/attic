@@ -9,6 +9,7 @@ use serde::de::DeserializeOwned;
 
 pub mod test_nar;
 
+#[cfg(feature = "nix_store")]
 fn connect() -> NixStore {
     NixStore::connect().expect("Failed to connect to the Nix store")
 }
@@ -52,11 +53,13 @@ fn assert_base_name_err(store: &str, path: &str, err: &str) {
 }
 
 #[test]
+#[cfg(feature = "nix_store")]
 fn test_connect() {
     connect();
 }
 
 #[test]
+#[cfg(feature = "nix_store")]
 fn test_store_dir() {
     let store = connect();
     let expected: PathBuf = cli_eval("builtins.storeDir");
@@ -143,6 +146,7 @@ fn test_store_path_hash() {
 }
 
 #[tokio::test]
+#[cfg(feature = "nix_store")]
 async fn test_nar_streaming() {
     let store = NixStore::connect().expect("Failed to connect to the Nix store");
 
@@ -164,6 +168,7 @@ async fn test_nar_streaming() {
 }
 
 #[tokio::test]
+#[cfg(feature = "nix_store")]
 async fn test_compute_fs_closure() {
     use test_nar::{WITH_DEPS_A, WITH_DEPS_B, WITH_DEPS_C};
 
@@ -188,6 +193,7 @@ async fn test_compute_fs_closure() {
 }
 
 #[tokio::test]
+#[cfg(feature = "nix_store")]
 async fn test_compute_fs_closure_multi() {
     use test_nar::{NO_DEPS, WITH_DEPS_A, WITH_DEPS_B, WITH_DEPS_C};
 
@@ -218,6 +224,7 @@ async fn test_compute_fs_closure_multi() {
 }
 
 #[tokio::test]
+#[cfg(feature = "nix_store")]
 async fn test_query_path_info() {
     use test_nar::{WITH_DEPS_B, WITH_DEPS_C};
 
