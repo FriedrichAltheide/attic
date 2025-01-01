@@ -64,6 +64,44 @@ jobs:
             cat
           fi
 
+  build-non-nix:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        package:
+          - client
+          - token
+          - attic
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4.1.7
+
+      - name: Update rust
+        run: rustup update
+
+      - name: Set ATTIC_PACKAGE_NAME
+        run: echo "ATTIC_PACKAGE_NAME=$(if [ "${{ matrix.package}}" == "attic" ]; then echo "attic"; else echo "attic-${{ matrix.package }}"; fi)" >> $GITHUB_ENV
+
+      - name: Set PACKAGE_FEATURES
+        # source: https://github.com/rust-lang/cargo/issues/3126#issuecomment-2523441905
+        run: echo "PACKAGE_FEATURES=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "${{ env.ATTIC_PACKAGE_NAME }}") | .features | keys | map(select(. != "default")) | map(select(. != "nix_store")) | join(",")')" >> $GITHUB_ENV
+
+      - name: Print envs
+        run: |
+          cargo --version
+          echo "Package feature: ${{ env.ATTIC_PACKAGE_NAME }}"
+          echo "Package feature: ${{ env.PACKAGE_FEATURES }}"
+
+      - name: Build
+        working-directory: ./${{ matrix.package }}
+        run: cargo build --no-default-features --features "${{ env.PACKAGE_FEATURES }}"
+
+      - name: Run tests
+        working-directory: ./${{ matrix.package }}
+        run: cargo test --no-default-features --features "${{ env.PACKAGE_FEATURES }}"
+
   tests:
     strategy:
       matrix:
