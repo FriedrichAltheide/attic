@@ -6,7 +6,8 @@ publish = false
 
 [[bin]]
 name = "attic"
-path = "src/main.rs"
+path = "src/bin/attic.rs"
+required-features = ["cli"]
 
 [dependencies]
 attic = { path = "../attic", default-features = false }
